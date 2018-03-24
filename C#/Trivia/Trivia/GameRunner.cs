@@ -9,7 +9,7 @@ namespace Trivia
         public static void Main(string[] args)
         {
             var ui = new Ui();
-            var aGame = new Game(ui);
+            var aGame = new Game(ui, new InfiniteTimer());
 
             aGame.Add(new Player("Chet", ui));
             aGame.Add(new Player("Pat", ui));

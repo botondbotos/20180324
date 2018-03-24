@@ -49,6 +49,8 @@
     <Compile Include="CharacterizationTests.cs" />
     <Compile Include="Penalty.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestTimer.cs" />
+    <Compile Include="TimeLimit.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

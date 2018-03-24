@@ -11,7 +11,7 @@ namespace CharTests
         {
             var ui = new Ui();
             var player = new Player("dummy", ui);
-            var game = new Game(ui);
+            var game = new Game(ui, new TestTimer());
             game.Add(player);
 
             Assert.That(player.IsInPenalty, Is.False);
@@ -22,7 +22,7 @@ namespace CharTests
         {
             var ui = new Ui();
             var player = new Player("dummy", ui);
-            var game = new Game(ui);
+            var game = new Game(ui, new TestTimer());
             game.Add(player);
 
             game.Roll(1);
@@ -35,7 +35,7 @@ namespace CharTests
         {
             var ui = new Ui();
             var player = new Player("dummy", ui);
-            var game = new Game(ui);
+            var game = new Game(ui, new TestTimer());
             game.Add(player);
 
             game.Roll(1);

@@ -37,11 +37,6 @@ namespace Trivia
         public void CorrectAnswer(string name, int purse)
         {
             Console.WriteLine("Answer was correct!!!!");
-            PlayerHasGold(name, purse);
-        }
-
-        private static void PlayerHasGold(string name, int purse)
-        {
             Console.WriteLine(name
                               + " now has "
                               + purse

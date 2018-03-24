@@ -7,6 +7,7 @@ namespace Trivia
     public class Game
     {
         private readonly Ui mUi;
+        private readonly ITimer mTimer;
 
         private readonly List<Player> mPlayers = new List<Player>();
 
@@ -18,9 +19,10 @@ namespace Trivia
         private Player mCurrentPlayer;
         private bool mIsGettingOutOfPenaltyBox;
 
-        public Game(Ui ui)
+        public Game(Ui ui, ITimer timer)
         {
             mUi = ui;
+            mTimer = timer;
 
             for (var i = 0; i < 50; i++)
             {
@@ -128,5 +130,10 @@ namespace Trivia
             mCurrentPlayerIndex++;
             if (mCurrentPlayerIndex == mPlayers.Count) mCurrentPlayerIndex = 0;
         }
+    }
+
+    public interface ITimer
+    {
+        bool Timeout { get; }
     }
 }
