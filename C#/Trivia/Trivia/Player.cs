@@ -34,5 +34,14 @@
             if (place == 10) return "Sports";
             return "Rock";
         }
+
+        public void GainGold()
+        {
+            Gold++;
+        }
+
+        public int Gold { get; private set; }
+
+        public bool Won => Gold == 6;
     }
 }

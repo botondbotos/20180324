@@ -10,7 +10,6 @@ namespace Trivia
 
         private readonly List<Player> mPlayers = new List<Player>();
         private readonly bool[] mInPenaltyBox = new bool[6];
-        private readonly int[] mPurses = new int[6];
 
         private readonly LinkedList<string> mPopQuestions = new LinkedList<string>();
         private readonly LinkedList<string> mRockQuestions = new LinkedList<string>();
@@ -44,7 +43,6 @@ namespace Trivia
         public bool Add(string playerName)
         {
             mPlayers.Add(new Player(playerName, mUi));
-            mPurses[HowManyPlayers()] = 0;
             mInPenaltyBox[HowManyPlayers()] = false;
 
             mUi.PlayerAdded(playerName, mPlayers.Count);
@@ -70,7 +68,7 @@ namespace Trivia
                     mIsGettingOutOfPenaltyBox = true;
 
                     mUi.PlayerLeavesPenalty(playerName);
-                    MoveNext(roll);
+                    Advance(roll);
                 }
                 else
                 {
@@ -80,11 +78,11 @@ namespace Trivia
             }
             else
             {
-                MoveNext(roll);
+                Advance(roll);
             }
         }
 
-        private void MoveNext(int roll)
+        private void Advance(int roll)
         {
             mCurrentPlayer.Advance(roll);
             AskQuestion();
@@ -110,10 +108,10 @@ namespace Trivia
             if (mInPenaltyBox[mCurrentPlayerIndex])
                 if (mIsGettingOutOfPenaltyBox)
                 {
-                    mPurses[mCurrentPlayerIndex]++;
-                    mUi.CorrectAnswer(mCurrentPlayer.Name, mPurses[mCurrentPlayerIndex]);
+                    mCurrentPlayer.GainGold();
+                    mUi.CorrectAnswer(mCurrentPlayer.Name, mCurrentPlayer.Gold);
 
-                    var winner = PlayerDidNotWin();
+                    var winner = !mCurrentPlayer.Won;
                     NextPlayer();
 
                     return winner;
@@ -125,10 +123,10 @@ namespace Trivia
                 }
 
             {
-                mPurses[mCurrentPlayerIndex]++;
-                mUi.CorrectAnswerTypo(mCurrentPlayer.Name, mPurses[mCurrentPlayerIndex]);
+                mCurrentPlayer.GainGold();
+                mUi.CorrectAnswerTypo(mCurrentPlayer.Name, mCurrentPlayer.Gold);
 
-                var winner = PlayerDidNotWin();
+                var winner = !mCurrentPlayer.Won;
                 NextPlayer();
 
                 return winner;
@@ -148,12 +146,6 @@ namespace Trivia
         {
             mCurrentPlayerIndex++;
             if (mCurrentPlayerIndex == mPlayers.Count) mCurrentPlayerIndex = 0;
-        }
-
-
-        private bool PlayerDidNotWin()
-        {
-            return mPurses[mCurrentPlayerIndex] != 6;
         }
     }
 }
