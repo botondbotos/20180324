@@ -8,29 +8,22 @@ namespace Trivia
     {
         private readonly IUi mUi;
         private readonly ITimer mTimer;
+        private readonly Dictionary<string, LinkedList<string>> qustions;
 
         private readonly List<Player> mPlayers = new List<Player>();
 
-        private readonly LinkedList<string> mPopQuestions = new LinkedList<string>();
-        private readonly LinkedList<string> mRockQuestions = new LinkedList<string>();
-        private readonly LinkedList<string> mScienceQuestions = new LinkedList<string>();
-        private readonly LinkedList<string> mSportsQuestions = new LinkedList<string>();
         private int mCurrentPlayerIndex;
         private Player mCurrentPlayer;
         private bool mIsGettingOutOfPenaltyBox;
 
-        public Game(IUi ui, ITimer timer)
+        public Game(
+            IUi ui, 
+            ITimer timer, 
+            Dictionary<string, LinkedList<string>> qustions)
         {
             mUi = ui;
             mTimer = timer;
-
-            for (var i = 0; i < 50; i++)
-            {
-                mPopQuestions.AddLast("Pop Question " + i);
-                mScienceQuestions.AddLast("Science Question " + i);
-                mSportsQuestions.AddLast("Sports Question " + i);
-                mRockQuestions.AddLast("Rock Question " + i);
-            }
+            this.qustions = qustions;
         }
 
         public bool Add(Player player)
@@ -78,10 +71,12 @@ namespace Trivia
         private void AskQuestion()
         {
             var currentCategory = mCurrentPlayer.CurrentCategory();
-            if (currentCategory == "Pop") Question(mPopQuestions);
-            if (currentCategory == "Science") Question(mScienceQuestions);
-            if (currentCategory == "Sports") Question(mSportsQuestions);
-            if (currentCategory == "Rock") Question(mRockQuestions);
+            if (currentCategory == "Pop") Question(this.qustions["Pop"]);
+            if (currentCategory == "Science") Question(this.qustions["Science"]);
+            if (currentCategory == "Sports") Question(this.qustions["Sports"]);
+            if (currentCategory == "Rock") Question(this.qustions["Rock"]);
+            if (currentCategory == "History") Question(this.qustions["History"]);
+            if (currentCategory == "Literature") Question(this.qustions["Literature"]);
         }
 
         private static void Question(LinkedList<string> questions)

@@ -22,7 +22,7 @@ namespace CharTests
             var ui = mUi.Object;
 
             mTimer = new TestTimer();
-            mGame = new Game(ui, mTimer);
+            mGame = new Game(ui, new TestTimer(), GameQuestionsFactory.CreateQuestions(GameRegion.RestOfTheWorld));
             mPlayer1 = new Player("p1", ui);
             mGame.Add(mPlayer1);
             mPlayer2 = new Player("p2", ui);

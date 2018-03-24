@@ -5,7 +5,7 @@
         private readonly IUi mUi;
 
         public string Name { get; }
-        public int Place { get; private set; }
+        public int Place { get; set; }
 
         public Player(string name, IUi ui)
         {
@@ -13,12 +13,7 @@
             mUi = ui;
         }
 
-        public void Advance(int roll)
-        {
-            Place = (Place + roll) % 12;
-
-            mUi.PlayerMovesTo(Name, Place, CurrentCategory());
-        }
+        
 
         public string CurrentCategory()
         {

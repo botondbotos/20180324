@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Trivia
 {
@@ -9,7 +10,8 @@ namespace Trivia
         public static void Main(string[] args)
         {
             var ui = new Ui();
-            var aGame = new Game(ui, new InfiniteTimer());
+            var questions = new Dictionary<string, LinkedList<string>>();
+            var aGame = new Game(ui, new InfiniteTimer(), questions);
 
             aGame.Add(new Player("Chet", ui));
             aGame.Add(new Player("Pat", ui));

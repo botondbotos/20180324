@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Collections.Generic;
+using NUnit.Framework;
 using Trivia;
 
 namespace CharTests
@@ -11,7 +12,7 @@ namespace CharTests
         {
             var ui = new Ui();
             var player = new Player("dummy", ui);
-            var game = new Game(ui, new TestTimer());
+            var game = new Game(ui, new TestTimer(), GameQuestionsFactory.CreateQuestions(GameRegion.RestOfTheWorld));
             game.Add(player);
 
             Assert.That(player.IsInPenalty, Is.False);
@@ -22,7 +23,7 @@ namespace CharTests
         {
             var ui = new Ui();
             var player = new Player("dummy", ui);
-            var game = new Game(ui, new TestTimer());
+            var game = new Game(ui, new TestTimer(), GameQuestionsFactory.CreateQuestions(GameRegion.RestOfTheWorld));
             game.Add(player);
 
             game.Roll(1);
@@ -35,7 +36,7 @@ namespace CharTests
         {
             var ui = new Ui();
             var player = new Player("dummy", ui);
-            var game = new Game(ui, new TestTimer());
+            var game = new Game(ui, new TestTimer(), GameQuestionsFactory.CreateQuestions(GameRegion.RestOfTheWorld));
             game.Add(player);
 
             game.Roll(1);
