@@ -32,7 +32,8 @@ namespace CharTests
         {
             return Directory.GetFiles(ReferenceOutputDirectory())
                 .Select(Path.GetFileName)
-                .Select(int.Parse);
+                .Select(int.Parse)
+                .Take(100);
         }
 
         private static string ReferenceOutputDirectory()

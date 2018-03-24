@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace UglyTrivia
+namespace Trivia
 {
     public class Game
     {
-        private readonly List<string> mPlayers = new List<string>();
+        private readonly Ui mUi = new Ui();
+
+        private readonly List<Player> mPlayers = new List<Player>();
         private readonly int[] mPlaces = new int[6];
         private readonly bool[] mInPenaltyBox = new bool[6];
         private readonly int[] mPurses = new int[6];
@@ -15,7 +17,8 @@ namespace UglyTrivia
         private readonly LinkedList<string> mRockQuestions = new LinkedList<string>();
         private readonly LinkedList<string> mScienceQuestions = new LinkedList<string>();
         private readonly LinkedList<string> mSportsQuestions = new LinkedList<string>();
-        private int mCurrentPlayer;
+        private int mCurrentPlayerIndex;
+        private Player mCurrentPlayer;
         private bool mIsGettingOutOfPenaltyBox;
 
         public Game()
@@ -41,13 +44,12 @@ namespace UglyTrivia
 
         public bool Add(string playerName)
         {
-            mPlayers.Add(playerName);
+            mPlayers.Add(new Player(playerName));
             mPlaces[HowManyPlayers()] = 0;
             mPurses[HowManyPlayers()] = 0;
             mInPenaltyBox[HowManyPlayers()] = false;
 
-            Console.WriteLine(playerName + " was added");
-            Console.WriteLine("They are player number " + mPlayers.Count);
+            mUi.PlayerAdded(playerName, mPlayers.Count);
             return true;
         }
 
@@ -58,121 +60,95 @@ namespace UglyTrivia
 
         public void Roll(int roll)
         {
-            Console.WriteLine(mPlayers[mCurrentPlayer] + " is the current player");
-            Console.WriteLine("They have rolled a " + roll);
+            mCurrentPlayer = mPlayers[mCurrentPlayerIndex];
 
-            if (mInPenaltyBox[mCurrentPlayer])
+            var playerName = mCurrentPlayer.Name;
+            mUi.PlayerRolls(playerName, roll);
+
+            if (mInPenaltyBox[mCurrentPlayerIndex])
             {
                 if (roll % 2 != 0)
                 {
                     mIsGettingOutOfPenaltyBox = true;
 
-                    Console.WriteLine(mPlayers[mCurrentPlayer] + " is getting out of the penalty box");
-                    mPlaces[mCurrentPlayer] = mPlaces[mCurrentPlayer] + roll;
-                    if (mPlaces[mCurrentPlayer] > 11) mPlaces[mCurrentPlayer] = mPlaces[mCurrentPlayer] - 12;
-
-                    Console.WriteLine(mPlayers[mCurrentPlayer]
-                                      + "'s new location is "
-                                      + mPlaces[mCurrentPlayer]);
-                    Console.WriteLine("The category is " + CurrentCategory());
-                    AskQuestion();
+                    mUi.PlayerLeavesPenalty(playerName);
+                    MoveNext(roll, playerName);
                 }
                 else
                 {
-                    Console.WriteLine(mPlayers[mCurrentPlayer] + " is not getting out of the penalty box");
+                    mUi.PlayerStaysInPenalty(playerName);
                     mIsGettingOutOfPenaltyBox = false;
                 }
             }
             else
             {
-                mPlaces[mCurrentPlayer] = mPlaces[mCurrentPlayer] + roll;
-                if (mPlaces[mCurrentPlayer] > 11) mPlaces[mCurrentPlayer] = mPlaces[mCurrentPlayer] - 12;
-
-                Console.WriteLine(mPlayers[mCurrentPlayer]
-                                  + "'s new location is "
-                                  + mPlaces[mCurrentPlayer]);
-                Console.WriteLine("The category is " + CurrentCategory());
-                AskQuestion();
+                MoveNext(roll, playerName);
             }
+        }
+
+        private void MoveNext(int roll, string playerName)
+        {
+            mPlaces[mCurrentPlayerIndex] = mPlaces[mCurrentPlayerIndex] + roll;
+            if (mPlaces[mCurrentPlayerIndex] > 11) mPlaces[mCurrentPlayerIndex] = mPlaces[mCurrentPlayerIndex] - 12;
+
+            mUi.PlayerMovesTo(playerName, mPlaces[mCurrentPlayerIndex], CurrentCategory());
+            AskQuestion();
         }
 
         private void AskQuestion()
         {
-            if (CurrentCategory() == "Pop")
-            {
-                Console.WriteLine(mPopQuestions.First());
-                mPopQuestions.RemoveFirst();
-            }
+            if (CurrentCategory() == "Pop") Question(mPopQuestions);
+            if (CurrentCategory() == "Science") Question(mScienceQuestions);
+            if (CurrentCategory() == "Sports") Question(mSportsQuestions);
+            if (CurrentCategory() == "Rock") Question(mRockQuestions);
+        }
 
-            if (CurrentCategory() == "Science")
-            {
-                Console.WriteLine(mScienceQuestions.First());
-                mScienceQuestions.RemoveFirst();
-            }
-
-            if (CurrentCategory() == "Sports")
-            {
-                Console.WriteLine(mSportsQuestions.First());
-                mSportsQuestions.RemoveFirst();
-            }
-
-            if (CurrentCategory() == "Rock")
-            {
-                Console.WriteLine(mRockQuestions.First());
-                mRockQuestions.RemoveFirst();
-            }
+        private static void Question(LinkedList<string> questions)
+        {
+            Console.WriteLine(questions.First());
+            questions.RemoveFirst();
         }
 
         private string CurrentCategory()
         {
-            if (mPlaces[mCurrentPlayer] == 0) return "Pop";
-            if (mPlaces[mCurrentPlayer] == 4) return "Pop";
-            if (mPlaces[mCurrentPlayer] == 8) return "Pop";
-            if (mPlaces[mCurrentPlayer] == 1) return "Science";
-            if (mPlaces[mCurrentPlayer] == 5) return "Science";
-            if (mPlaces[mCurrentPlayer] == 9) return "Science";
-            if (mPlaces[mCurrentPlayer] == 2) return "Sports";
-            if (mPlaces[mCurrentPlayer] == 6) return "Sports";
-            if (mPlaces[mCurrentPlayer] == 10) return "Sports";
+            var place = mPlaces[mCurrentPlayerIndex];
+            if (place == 0) return "Pop";
+            if (place == 1) return "Science";
+            if (place == 2) return "Sports";
+            if (place == 4) return "Pop";
+            if (place == 5) return "Science";
+            if (place == 6) return "Sports";
+            if (place == 8) return "Pop";
+            if (place == 9) return "Science";
+            if (place == 10) return "Sports";
             return "Rock";
         }
 
         public bool WasCorrectlyAnswered()
         {
-            if (mInPenaltyBox[mCurrentPlayer])
+            if (mInPenaltyBox[mCurrentPlayerIndex])
                 if (mIsGettingOutOfPenaltyBox)
                 {
-                    Console.WriteLine("Answer was correct!!!!");
-                    mPurses[mCurrentPlayer]++;
-                    Console.WriteLine(mPlayers[mCurrentPlayer]
-                                      + " now has "
-                                      + mPurses[mCurrentPlayer]
-                                      + " Gold Coins.");
+                    mPurses[mCurrentPlayerIndex]++;
+                    mUi.CorrectAnswer(mCurrentPlayer.Name, mPurses[mCurrentPlayerIndex]);
 
-                    var winner = DidPlayerWin();
-                    mCurrentPlayer++;
-                    if (mCurrentPlayer == mPlayers.Count) mCurrentPlayer = 0;
+                    var winner = PlayerDidNotWin();
+                    NextPlayer();
 
                     return winner;
                 }
                 else
                 {
-                    mCurrentPlayer++;
-                    if (mCurrentPlayer == mPlayers.Count) mCurrentPlayer = 0;
+                    NextPlayer();
                     return true;
                 }
 
             {
-                Console.WriteLine("Answer was corrent!!!!");
-                mPurses[mCurrentPlayer]++;
-                Console.WriteLine(mPlayers[mCurrentPlayer]
-                                  + " now has "
-                                  + mPurses[mCurrentPlayer]
-                                  + " Gold Coins.");
+                mPurses[mCurrentPlayerIndex]++;
+                mUi.CorrectAnswerTypo(mCurrentPlayer.Name, mPurses[mCurrentPlayerIndex]);
 
-                var winner = DidPlayerWin();
-                mCurrentPlayer++;
-                if (mCurrentPlayer == mPlayers.Count) mCurrentPlayer = 0;
+                var winner = PlayerDidNotWin();
+                NextPlayer();
 
                 return winner;
             }
@@ -180,19 +156,23 @@ namespace UglyTrivia
 
         public bool WrongAnswer()
         {
-            Console.WriteLine("Question was incorrectly answered");
-            Console.WriteLine(mPlayers[mCurrentPlayer] + " was sent to the penalty box");
-            mInPenaltyBox[mCurrentPlayer] = true;
+            mUi.IncorrectAnswer(mCurrentPlayer.Name);
+            mInPenaltyBox[mCurrentPlayerIndex] = true;
 
-            mCurrentPlayer++;
-            if (mCurrentPlayer == mPlayers.Count) mCurrentPlayer = 0;
+            NextPlayer();
             return true;
         }
 
-
-        private bool DidPlayerWin()
+        private void NextPlayer()
         {
-            return !(mPurses[mCurrentPlayer] == 6);
+            mCurrentPlayerIndex++;
+            if (mCurrentPlayerIndex == mPlayers.Count) mCurrentPlayerIndex = 0;
+        }
+
+
+        private bool PlayerDidNotWin()
+        {
+            return mPurses[mCurrentPlayerIndex] != 6;
         }
     }
 }
