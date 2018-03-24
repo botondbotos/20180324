@@ -9,7 +9,6 @@ namespace Trivia
         private readonly Ui mUi = new Ui();
 
         private readonly List<Player> mPlayers = new List<Player>();
-        private readonly int[] mPlaces = new int[6];
         private readonly bool[] mInPenaltyBox = new bool[6];
         private readonly int[] mPurses = new int[6];
 
@@ -44,8 +43,7 @@ namespace Trivia
 
         public bool Add(string playerName)
         {
-            mPlayers.Add(new Player(playerName));
-            mPlaces[HowManyPlayers()] = 0;
+            mPlayers.Add(new Player(playerName, mUi));
             mPurses[HowManyPlayers()] = 0;
             mInPenaltyBox[HowManyPlayers()] = false;
 
@@ -72,7 +70,7 @@ namespace Trivia
                     mIsGettingOutOfPenaltyBox = true;
 
                     mUi.PlayerLeavesPenalty(playerName);
-                    MoveNext(roll, playerName);
+                    MoveNext(roll);
                 }
                 else
                 {
@@ -82,46 +80,29 @@ namespace Trivia
             }
             else
             {
-                MoveNext(roll, playerName);
+                MoveNext(roll);
             }
         }
 
-        private void MoveNext(int roll, string playerName)
+        private void MoveNext(int roll)
         {
-            mPlaces[mCurrentPlayerIndex] = mPlaces[mCurrentPlayerIndex] + roll;
-            if (mPlaces[mCurrentPlayerIndex] > 11) mPlaces[mCurrentPlayerIndex] = mPlaces[mCurrentPlayerIndex] - 12;
-
-            mUi.PlayerMovesTo(playerName, mPlaces[mCurrentPlayerIndex], CurrentCategory());
+            mCurrentPlayer.Advance(roll);
             AskQuestion();
         }
 
         private void AskQuestion()
         {
-            if (CurrentCategory() == "Pop") Question(mPopQuestions);
-            if (CurrentCategory() == "Science") Question(mScienceQuestions);
-            if (CurrentCategory() == "Sports") Question(mSportsQuestions);
-            if (CurrentCategory() == "Rock") Question(mRockQuestions);
+            var currentCategory = mCurrentPlayer.CurrentCategory();
+            if (currentCategory == "Pop") Question(mPopQuestions);
+            if (currentCategory == "Science") Question(mScienceQuestions);
+            if (currentCategory == "Sports") Question(mSportsQuestions);
+            if (currentCategory == "Rock") Question(mRockQuestions);
         }
 
         private static void Question(LinkedList<string> questions)
         {
             Console.WriteLine(questions.First());
             questions.RemoveFirst();
-        }
-
-        private string CurrentCategory()
-        {
-            var place = mPlaces[mCurrentPlayerIndex];
-            if (place == 0) return "Pop";
-            if (place == 1) return "Science";
-            if (place == 2) return "Sports";
-            if (place == 4) return "Pop";
-            if (place == 5) return "Science";
-            if (place == 6) return "Sports";
-            if (place == 8) return "Pop";
-            if (place == 9) return "Science";
-            if (place == 10) return "Sports";
-            return "Rock";
         }
 
         public bool WasCorrectlyAnswered()
