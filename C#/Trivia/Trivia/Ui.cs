@@ -34,12 +34,6 @@ namespace Trivia
             Console.WriteLine("The category is " + category);
         }
 
-        public void CorrectAnswerTypo(string name, int purse)
-        {
-            Console.WriteLine("Answer was corrent!!!!");
-            PlayerHasGold(name, purse);
-        }
-
         public void CorrectAnswer(string name, int purse)
         {
             Console.WriteLine("Answer was correct!!!!");

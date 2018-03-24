@@ -107,7 +107,7 @@ namespace Trivia
 
             {
                 mCurrentPlayer.GainGold();
-                mUi.CorrectAnswerTypo(mCurrentPlayer.Name, mCurrentPlayer.Gold);
+                mUi.CorrectAnswer(mCurrentPlayer.Name, mCurrentPlayer.Gold);
 
                 var winner = !mCurrentPlayer.Won;
                 NextPlayer();
