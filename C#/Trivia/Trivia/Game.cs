@@ -9,7 +9,6 @@ namespace Trivia
         private readonly Ui mUi = new Ui();
 
         private readonly List<Player> mPlayers = new List<Player>();
-        private readonly bool[] mInPenaltyBox = new bool[6];
 
         private readonly LinkedList<string> mPopQuestions = new LinkedList<string>();
         private readonly LinkedList<string> mRockQuestions = new LinkedList<string>();
@@ -26,32 +25,16 @@ namespace Trivia
                 mPopQuestions.AddLast("Pop Question " + i);
                 mScienceQuestions.AddLast("Science Question " + i);
                 mSportsQuestions.AddLast("Sports Question " + i);
-                mRockQuestions.AddLast(CreateRockQuestion(i));
+                mRockQuestions.AddLast("Rock Question " + i);
             }
-        }
-
-        public string CreateRockQuestion(int index)
-        {
-            return "Rock Question " + index;
-        }
-
-        public bool IsPlayable()
-        {
-            return HowManyPlayers() >= 2;
         }
 
         public bool Add(string playerName)
         {
             mPlayers.Add(new Player(playerName, mUi));
-            mInPenaltyBox[HowManyPlayers()] = false;
 
             mUi.PlayerAdded(playerName, mPlayers.Count);
             return true;
-        }
-
-        public int HowManyPlayers()
-        {
-            return mPlayers.Count;
         }
 
         public void Roll(int roll)
@@ -61,7 +44,7 @@ namespace Trivia
             var playerName = mCurrentPlayer.Name;
             mUi.PlayerRolls(playerName, roll);
 
-            if (mInPenaltyBox[mCurrentPlayerIndex])
+            if (mCurrentPlayer.IsInPenalty)
             {
                 if (roll % 2 != 0)
                 {
@@ -105,7 +88,7 @@ namespace Trivia
 
         public bool WasCorrectlyAnswered()
         {
-            if (mInPenaltyBox[mCurrentPlayerIndex])
+            if (mCurrentPlayer.IsInPenalty)
                 if (mIsGettingOutOfPenaltyBox)
                 {
                     mCurrentPlayer.GainGold();
@@ -135,8 +118,7 @@ namespace Trivia
 
         public bool WrongAnswer()
         {
-            mUi.IncorrectAnswer(mCurrentPlayer.Name);
-            mInPenaltyBox[mCurrentPlayerIndex] = true;
+            mCurrentPlayer.WrongAnswer();
 
             NextPlayer();
             return true;

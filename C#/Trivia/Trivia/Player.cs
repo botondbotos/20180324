@@ -43,5 +43,14 @@
         public int Gold { get; private set; }
 
         public bool Won => Gold == 6;
+
+        public void WrongAnswer()
+        {
+            mUi.IncorrectAnswer(Name);
+            IsInPenalty = true;
+
+        }
+
+        public bool IsInPenalty { get; private set; }
     }
 }
