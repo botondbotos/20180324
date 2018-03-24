@@ -2,31 +2,43 @@
 
 namespace Trivia
 {
-    public class Ui
+    public interface IUi
     {
-        public void PlayerAdded(string name, int count)
+        void PlayerAdded(string name, int count);
+        void PlayerRolls(string name, int roll);
+        void PlayerLeavesPenalty(string name);
+        void PlayerStaysInPenalty(string name);
+        void PlayerMovesTo(string name, int place, string category);
+        void CorrectAnswer(string name, int purse);
+        void IncorrectAnswer(string name);
+        void PlayerWon(string name);
+    }
+
+    public class Ui : IUi
+    {
+        void IUi.PlayerAdded(string name, int count)
         {
             Console.WriteLine(name + " was added");
             Console.WriteLine("They are player number " + count);
         }
 
-        public void PlayerRolls(string name, int roll)
+        void IUi.PlayerRolls(string name, int roll)
         {
             Console.WriteLine(name + " is the current player");
             Console.WriteLine("They have rolled a " + roll);
         }
 
-        public void PlayerLeavesPenalty(string name)
+        void IUi.PlayerLeavesPenalty(string name)
         {
             Console.WriteLine(name + " is getting out of the penalty box");
         }
 
-        public void PlayerStaysInPenalty(string name)
+        void IUi.PlayerStaysInPenalty(string name)
         {
             Console.WriteLine(name + " is not getting out of the penalty box");
         }
 
-        public void PlayerMovesTo(string name, int place, string category)
+        void IUi.PlayerMovesTo(string name, int place, string category)
         {
             Console.WriteLine(name
                               + "'s new location is "
@@ -34,7 +46,7 @@ namespace Trivia
             Console.WriteLine("The category is " + category);
         }
 
-        public void CorrectAnswer(string name, int purse)
+        void IUi.CorrectAnswer(string name, int purse)
         {
             Console.WriteLine("Answer was correct!!!!");
             Console.WriteLine(name
@@ -43,11 +55,15 @@ namespace Trivia
                               + " Gold Coins.");
         }
 
-        public void IncorrectAnswer(string name)
+        void IUi.IncorrectAnswer(string name)
         {
             Console.WriteLine("Question was incorrectly answered");
             Console.WriteLine(name + " was sent to the penalty box");
 
+        }
+
+        void IUi.PlayerWon(string name)
+        {
         }
     }
 }

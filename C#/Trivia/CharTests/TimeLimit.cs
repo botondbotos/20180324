@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Moq;
+using NUnit.Framework;
 using Trivia;
 
 namespace CharTests
@@ -8,19 +9,23 @@ namespace CharTests
     {
         private Game mGame;
         private TestTimer mTimer;
-        private Ui mUi;
+        private Mock<IUi> mUi;
         private Player mPlayer1;
         private Player mPlayer2;
 
         [SetUp]
         public void SetUp()
         {
-            mUi = new Ui();
+            mUi = new Mock<IUi>(MockBehavior.Loose);
+            mUi.Setup(u => u.PlayerWon(It.IsAny<string>())).Verifiable();
+
+            var ui = mUi.Object;
+
             mTimer = new TestTimer();
-            mGame = new Game(mUi, mTimer);
-            mPlayer1 = new Player("p1", mUi);
+            mGame = new Game(ui, mTimer);
+            mPlayer1 = new Player("p1", ui);
             mGame.Add(mPlayer1);
-            mPlayer2 = new Player("p2", mUi);
+            mPlayer2 = new Player("p2", ui);
             mGame.Add(mPlayer2);
         }
 
@@ -44,6 +49,16 @@ namespace CharTests
             Assert.That(mPlayer1.Gold, Is.EqualTo(p1gold), "Player 1 gold");
             Assert.That(mPlayer2.Gold, Is.EqualTo(p2gold), "Player 2 gold");
             Assert.That(@continue, Is.EqualTo(winner == null), "Winner is {0}", winner);
+
+            if (winner == null)
+            {
+                mUi.Verify(u => u.PlayerWon(It.IsAny<string>()), Times.Never);
+            }
+            else
+            {
+                mUi.Verify(u => u.PlayerWon(It.IsAny<string>()), Times.Exactly(1));
+                mUi.Verify(u => u.PlayerWon(winner), Times.Exactly(1));
+            }
         }
 
         [Test]

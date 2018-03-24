@@ -2,12 +2,12 @@
 {
     public class Player
     {
-        private Ui mUi;
+        private readonly IUi mUi;
 
         public string Name { get; }
         public int Place { get; private set; }
 
-        public Player(string name, Ui ui)
+        public Player(string name, IUi ui)
         {
             Name = name;
             mUi = ui;

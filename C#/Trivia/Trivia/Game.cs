@@ -6,7 +6,7 @@ namespace Trivia
 {
     public class Game
     {
-        private readonly Ui mUi;
+        private readonly IUi mUi;
         private readonly ITimer mTimer;
 
         private readonly List<Player> mPlayers = new List<Player>();
@@ -19,7 +19,7 @@ namespace Trivia
         private Player mCurrentPlayer;
         private bool mIsGettingOutOfPenaltyBox;
 
-        public Game(Ui ui, ITimer timer)
+        public Game(IUi ui, ITimer timer)
         {
             mUi = ui;
             mTimer = timer;
