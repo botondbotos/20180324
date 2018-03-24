@@ -6,14 +6,12 @@ namespace UglyTrivia
 {
     public class Game
     {
-        private readonly bool[] mInPenaltyBox = new bool[6];
-
-        private readonly int[] mPlaces = new int[6];
-
         private readonly List<string> mPlayers = new List<string>();
+        private readonly int[] mPlaces = new int[6];
+        private readonly bool[] mInPenaltyBox = new bool[6];
+        private readonly int[] mPurses = new int[6];
 
         private readonly LinkedList<string> mPopQuestions = new LinkedList<string>();
-        private readonly int[] mPurses = new int[6];
         private readonly LinkedList<string> mRockQuestions = new LinkedList<string>();
         private readonly LinkedList<string> mScienceQuestions = new LinkedList<string>();
         private readonly LinkedList<string> mSportsQuestions = new LinkedList<string>();
