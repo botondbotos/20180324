@@ -6,7 +6,7 @@ namespace Trivia
 {
     public class Game
     {
-        private readonly Ui mUi = new Ui();
+        private readonly Ui mUi;
 
         private readonly List<Player> mPlayers = new List<Player>();
 
@@ -18,8 +18,10 @@ namespace Trivia
         private Player mCurrentPlayer;
         private bool mIsGettingOutOfPenaltyBox;
 
-        public Game()
+        public Game(Ui ui)
         {
+            mUi = ui;
+
             for (var i = 0; i < 50; i++)
             {
                 mPopQuestions.AddLast("Pop Question " + i);
@@ -29,11 +31,11 @@ namespace Trivia
             }
         }
 
-        public bool Add(string playerName)
+        public bool Add(Player player)
         {
-            mPlayers.Add(new Player(playerName, mUi));
+            mPlayers.Add(player);
 
-            mUi.PlayerAdded(playerName, mPlayers.Count);
+            mUi.PlayerAdded(player.Name, mPlayers.Count);
             return true;
         }
 
@@ -91,8 +93,7 @@ namespace Trivia
             if (mCurrentPlayer.IsInPenalty)
                 if (mIsGettingOutOfPenaltyBox)
                 {
-                    mCurrentPlayer.GainGold();
-                    mUi.CorrectAnswer(mCurrentPlayer.Name, mCurrentPlayer.Gold);
+                    mCurrentPlayer.CorrectAnswer();
 
                     var winner = !mCurrentPlayer.Won;
                     NextPlayer();
@@ -104,10 +105,8 @@ namespace Trivia
                     NextPlayer();
                     return true;
                 }
-
             {
-                mCurrentPlayer.GainGold();
-                mUi.CorrectAnswer(mCurrentPlayer.Name, mCurrentPlayer.Gold);
+                mCurrentPlayer.CorrectAnswer();
 
                 var winner = !mCurrentPlayer.Won;
                 NextPlayer();

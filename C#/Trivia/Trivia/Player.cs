@@ -44,11 +44,16 @@
 
         public bool Won => Gold == 6;
 
+        public void CorrectAnswer()
+        {
+            GainGold();
+            mUi.CorrectAnswer(Name, Gold);
+        }
+
         public void WrongAnswer()
         {
             mUi.IncorrectAnswer(Name);
             IsInPenalty = true;
-
         }
 
         public bool IsInPenalty { get; private set; }
