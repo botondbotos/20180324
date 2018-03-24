@@ -92,29 +92,19 @@ namespace Trivia
 
         public bool WasCorrectlyAnswered()
         {
-            if (mCurrentPlayer.IsInPenalty)
-                if (mIsGettingOutOfPenaltyBox)
-                {
-                    mCurrentPlayer.CorrectAnswer();
-
-                    var winner = !mCurrentPlayer.Won;
-                    NextPlayer();
-
-                    return winner;
-                }
-                else
-                {
-                    NextPlayer();
-                    return true;
-                }
+            if (mCurrentPlayer.IsInPenalty && !mIsGettingOutOfPenaltyBox)
             {
-                mCurrentPlayer.CorrectAnswer();
-
-                var winner = !mCurrentPlayer.Won;
                 NextPlayer();
-
-                return winner;
+                return true;
             }
+
+            mCurrentPlayer.CorrectAnswer();
+
+            var winner = !mCurrentPlayer.Won;
+            if (!winner) mUi.PlayerWon(mCurrentPlayer.Name);
+            NextPlayer();
+
+            return winner;
         }
 
         public bool WrongAnswer()

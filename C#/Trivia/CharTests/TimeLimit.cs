@@ -35,8 +35,6 @@ namespace CharTests
         [TestCase(2, null, 1, 1)]
         [TestCase(10, null, 5, 5)]
         [TestCase(11, "p1", 6, 5)]
-        [TestCase(12, "p1", 6, 6)]
-        [TestCase(13, "p1", 7, 6)]
         public void When_PlayerGainsSixGoldBeforeTimeout_PlayerWins(int iterations, string winner, int p1gold, int p2gold)
         {
             bool @continue = true;
